@@ -27,7 +27,7 @@ toc = true
 favicon = "img/favicon.ico"
 list_pages = true
 header_nav = [
-    { url = "/", name_en = "[posts]" },
+    { url = "/", name_en = "[post?]" },
     { url = "/tags", name_en = "[tags]" },
     { url = "/about", name_en = "[about]" },
 ]
