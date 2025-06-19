@@ -1,2 +1,2 @@
-Personal blog deployed [here](https://noteoverflow.github.io)
+Something about me [here](https://noteoverflow.github.io)
 
