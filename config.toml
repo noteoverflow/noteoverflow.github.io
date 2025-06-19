@@ -1,5 +1,5 @@
 # The URL the site will be built for
-base_url = "https://noteoverflow.github.io/blog"
+base_url = "https://noteoverflow.github.io"
 minify_html = true
 generate_feeds = true
 generate_sitemap = true
