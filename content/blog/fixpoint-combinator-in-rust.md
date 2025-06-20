@@ -2,6 +2,7 @@
 title = "Fix point combinator in Rust"
 date = 2025-04-03
 extra.katex = true
+extra.toc = true
 [taxonomies]
 tags = ["plt", "rust", "programming"]
 # banner_image: media/y-combinator-banner.png

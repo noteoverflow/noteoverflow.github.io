@@ -2,12 +2,13 @@
 title = "Another view of Rust's lifetime II - The algorithm"
 date = 2025-06-01
 extra.katex = true
+extra.toc = true
 [taxonomies]
 tags = ["rust", "programming"]
 +++
 
 Previously, I described another view of Rust's lifetime which is dual to the traditional one in
-> [Another view of Rust's lifetime](another-view-of-Rusts-lifetime.md)
+> [Another view of Rust's lifetime](/blog/another-view-of-rusts-lifetime)
 
 Today, let's try to make it a concrete algorithm demo based on [Polonius](https://rust-lang.github.io/polonius/).
 To formally and clearly describe the core rules of the algorithm, I want to use a special DSL which is drived from Datalog:
