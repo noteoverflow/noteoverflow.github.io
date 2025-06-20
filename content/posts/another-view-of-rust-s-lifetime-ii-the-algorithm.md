@@ -8,7 +8,7 @@ tags = ["rust", "programming"]
 +++
 
 Previously, I described another view of Rust's lifetime which is dual to the traditional one in
-> [Another view of Rust's lifetime](/blog/another-view-of-rusts-lifetime)
+> [Another view of Rust's lifetime](/posts/another-view-of-rusts-lifetime)
 
 Today, let's try to make it a concrete algorithm demo based on [Polonius](https://rust-lang.github.io/polonius/).
 To formally and clearly describe the core rules of the algorithm, I want to use a special DSL which is drived from Datalog:

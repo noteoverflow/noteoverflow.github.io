@@ -2,5 +2,5 @@
 +++
 
 <script type="text/javascript">
-    window.location.href = "/blog"
+    window.location.href = "/posts"
 </script>
