@@ -1,8 +1,9 @@
 <li class="title-list">
-    {% if page.date %}
-    <time class="content-meta">{{ page.date | date(format="%Y-%m-%d") }}</time>
+    {% if not page.date %}
+        <time class="content-meta">{{ page.date | date(format="%b") }}</time>
     {% endif %}
     <a href="{{ page.permalink }}" class="content-link">
         {{ page.title }}
     </a>
 </li>
+
