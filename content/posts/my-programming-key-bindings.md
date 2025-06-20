@@ -1,6 +1,8 @@
 +++
 title = "My programming key bindings"
 date = 2024-08-10
+[taxonomies]
+tags = ["editor"]
 +++
 
 I like the idea of editing of *VIM*, but I still think this is not the best.

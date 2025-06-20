@@ -2,6 +2,8 @@
 title = "Another view of Rust's lifetime"
 date = 2024-08-11
 extra.toc = true
+[taxonomies]
+tags = ["rust", "programming"]
 +++
 
 Compared with *Haskell*, Rust is different for its effect system and ownership system.
