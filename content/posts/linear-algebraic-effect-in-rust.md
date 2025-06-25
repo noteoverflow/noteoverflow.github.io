@@ -1,6 +1,7 @@
 +++
 title = "Linear algebraic effects in Rust"
 date = 2025-03-29
+extra.toc = true
 [taxonomies]
 tags = ["rust", "programming", "effect-system"]
 +++

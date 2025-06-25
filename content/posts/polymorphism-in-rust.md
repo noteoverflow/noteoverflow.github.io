@@ -1,6 +1,7 @@
 +++
 title = "Polymorphism in Rust"
 date = 2024-08-05
+extra.toc = true
 [taxonomies]
 tags = ["rust", "programming", "effect-system"]
 +++

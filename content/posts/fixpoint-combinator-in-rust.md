@@ -17,26 +17,31 @@ Let's try to implement it in Rust and have fun!
 
 What do we mean by "fix point"?
 Well, in fact, it's quite simple. A *fix point* of a function $f$ is a parameter $x$ with the following equation:
+
 $$
 f(x) = x
 $$
 
 This does not seem to be fun...
 But if we try to flip the equation, it's quite interesting:
+
 $$
 x = f(x) = f(f(x)) = f(f(f(x))) = f^n(x)
 $$
+
 If we can find a fix point, then we have recursion and loops for free!
 Now suppose we want to build a magic wand Y, for any function $f$, whenever we apply the wand to $f$,
 we automaically get the fix point of $f$, that is:
+
 $$
 Y(f) = f(Y(f))
 $$
+
 $Y(f)$ becomes the fix point of function $f$!
 But does this magic wand exist? Haskell said *YES*!
 
 <center>
-<img src="/img/blog/fixpoint-combinator-in-rust/y-combinator-mit.png" width=400/><br/><br/>
+<img src="/img/blog/fixpoint-combinator-in-rust/y-combinator-mit.png" width=400/><br/>
 figure 1
 </center>
 
@@ -378,6 +383,7 @@ What's the point of abstracting fix point this way?
 The secret lies in the relations of different kinds of F-algebras!
 
 Suppose you have two F-algebras:
+
 $$
 F(a) \rightarrow a
 $$

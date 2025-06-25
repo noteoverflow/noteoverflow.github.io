@@ -3,7 +3,12 @@
         <time class="content-meta">{{ page.date | date(format="%b") }}</time>
     {% endif %}
     <a href="{{ page.permalink }}" class="content-link">
-        {{ page.title }}
+        {% set year = page.date|date(format="%Y") %}
+        {% if year != now()|date(format="%Y") %}
+            [{{page.date|date(format="%Y-%m")}}] {{ page.title }}
+        {% else %}
+            {{ page.title }}
+        {% endif %}
     </a>
 </li>
 
