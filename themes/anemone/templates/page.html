@@ -24,8 +24,9 @@
     </header>
 
 {% if page.extra.toc and page.toc %}
+<details>
+<summary><i>Table of content</i></summary>
 <div class="toc-container">
-    <h2>Table of content</h2>
     <ul>
         {% for h1 in page.toc %}
         <li>
@@ -41,6 +42,7 @@
         {% endfor %}
     </ul>
 </div>
+</details>
 {% endif %}
 
     <div class="post-content">

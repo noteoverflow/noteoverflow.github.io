@@ -2,7 +2,7 @@
 title = "Polymorphism in Rust"
 date = 2024-08-05
 [taxonomies]
-tags = ["rust", "programming"]
+tags = ["rust", "programming", "effect-system"]
 +++
 
 Every language has polymorphism functions. Some utilize dynamic interfaces, some invent generics and typeclass to overload behavories.
