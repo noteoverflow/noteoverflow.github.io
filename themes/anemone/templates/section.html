@@ -8,14 +8,11 @@
     <ul class="content-list">
         {# Use paginator if it exists, else regular pages #}
         {% for year, posts in section.pages | group_by(attribute="year") %}
-            {% if year != now()|date(format="%Y") %}
-            <br/>
-            <li><b>[more]</b></li>
-            <hr/>
-            {% endif %}
             {% for page in posts %}
                 {% include "partials/content-listing-item.html" %}
             {% endfor %}
+            <br/>
+
         {% endfor %}
         <!-- {% for page in paginator.pages | default(value=section.pages) %}
             {% include "partials/content-listing-item.html" %}

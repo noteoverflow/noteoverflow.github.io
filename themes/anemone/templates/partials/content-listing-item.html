@@ -4,11 +4,7 @@
     {% endif %}
     <a href="{{ page.permalink }}" class="content-link">
         {% set year = page.date|date(format="%Y") %}
-        {% if year != now()|date(format="%Y") %}
-            [{{page.date|date(format="%Y-%m")}}] {{ page.title }}
-        {% else %}
-            {{ page.title }}
-        {% endif %}
+        [{{page.date|date(format="%Y-%m")}}] {{ page.title }}
     </a>
 </li>
 
