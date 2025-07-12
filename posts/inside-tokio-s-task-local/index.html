@@ -1,0 +1,117 @@
+<!doctype html><html lang=en><head><meta charset=UTF-8><meta content="width=device-width,initial-scale=1.0" name=viewport><meta content="index, follow" name=robots><link href=https://noteoverflow.github.io/rss.xml rel=alternate title=RSS type=application/rss+xml><title>noteoverflow | Inside Tokio's task_local!</title><link as=style href=https://noteoverflow.github.io/css/style.css rel=preload><link crossorigin href=https://noteoverflow.github.io/css/reset-min.css rel=stylesheet><link crossorigin href=https://noteoverflow.github.io/css/suCSS-min.css rel=stylesheet><link href=https://noteoverflow.github.io/css/style.css rel=stylesheet><link href=https://noteoverflow.github.io/css/custom.css rel=stylesheet><link href=https://noteoverflow.github.io/img/favicon.ico rel=icon><body><nav id=nav-bar><a href=/> [post] </a><a href=/pinned> [pinned] </a><a href=/tags> [tag] </a><a href=/about> [about] </a>   <div aria-label="Toggle theme" class=theme-toggle data-icon-base=https://noteoverflow.github.io/icons.svg data-icon-dark=#darkMode data-icon-light=#lightMode data-sound-src=https://noteoverflow.github.io/click.ogg id=theme-toggle role=button tabindex=0><svg class=icon><use id=theme-icon></use></svg></div></nav><main><article class=post><header class=post-header><time datetime=2024-09-01>Published on: <span class=accent-data>2024-09-01</span> </time><h1>Inside Tokio's task_local!</h1></header><div class=post-content><p>Recently I'm curious about Tokio runtime's <code>task_local</code> and <code>LocalKey</code>. How can this macro ensure task-level global variable?<h2 id=task-local-is-based-on-thread-local><code>task_local!</code> is based on <code>thread_local!</code></h2><p>Let's unravel <code>task_local</code> the macro's definition:<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span>#[</span><span style=color:#bf616a>macro_export</span><span>]
+</span><span>#[</span><span style=color:#bf616a>cfg_attr</span><span>(docsrs, </span><span style=color:#bf616a>doc</span><span>(</span><span style=color:#bf616a>cfg</span><span>(feature = "</span><span style=color:#a3be8c>rt</span><span>")))]
+</span><span style=color:#96b5b4>macro_rules! </span><span>task_local {
+</span><span>     </span><span style=color:#65737e>// empty (base case for the recursion)
+</span><span>    () => {};
+</span><span>
+</span><span>    ($(#[</span><span style=color:#bf616a>$attr</span><span>:</span><span style=color:#b48ead>meta</span><span>])* $vis:vis static </span><span style=color:#bf616a>$name</span><span>:</span><span style=color:#b48ead>ident</span><span>: </span><span style=color:#bf616a>$t</span><span>:</span><span style=color:#b48ead>ty</span><span>; $(</span><span style=color:#bf616a>$rest</span><span>:</span><span style=color:#b48ead>tt</span><span>)*) => {
+</span><span>        </span><span style=color:#bf616a>$crate</span><span>::__task_local_inner!($(#[</span><span style=color:#bf616a>$attr</span><span>])* </span><span style=color:#bf616a>$vis $name</span><span>, </span><span style=color:#bf616a>$t</span><span>);
+</span><span>        </span><span style=color:#bf616a>$crate</span><span>::task_local!($(</span><span style=color:#bf616a>$rest</span><span>)*);
+</span><span>    };
+</span><span>
+</span><span>    ($(#[</span><span style=color:#bf616a>$attr</span><span>:</span><span style=color:#b48ead>meta</span><span>])* $vis:vis static </span><span style=color:#bf616a>$name</span><span>:</span><span style=color:#b48ead>ident</span><span>: </span><span style=color:#bf616a>$t</span><span>:</span><span style=color:#b48ead>ty</span><span>) => {
+</span><span>        </span><span style=color:#bf616a>$crate</span><span>::__task_local_inner!($(#[</span><span style=color:#bf616a>$attr</span><span>])* </span><span style=color:#bf616a>$vis $name</span><span>, </span><span style=color:#bf616a>$t</span><span>);
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span>#[</span><span style=color:#bf616a>doc</span><span>(hidden)]
+</span><span>#[</span><span style=color:#bf616a>macro_export</span><span>]
+</span><span style=color:#96b5b4>macro_rules! </span><span>__task_local_inner {
+</span><span>    ($(#[</span><span style=color:#bf616a>$attr</span><span>:</span><span style=color:#b48ead>meta</span><span>])* $vis:vis </span><span style=color:#bf616a>$name</span><span>:</span><span style=color:#b48ead>ident</span><span>, </span><span style=color:#bf616a>$t</span><span>:</span><span style=color:#b48ead>ty</span><span>) => {
+</span><span>        $(#[</span><span style=color:#bf616a>$attr</span><span>])*
+</span><span>        </span><span style=color:#bf616a>$vis </span><span style=color:#b48ead>static </span><span style=color:#bf616a>$name</span><span>: </span><span style=color:#bf616a>$crate</span><span>::task::LocalKey<</span><span style=color:#bf616a>$t</span><span>> = {
+</span><span>            std::thread_local! {
+</span><span>                </span><span style=color:#b48ead>static </span><span style=color:#d08770>__KEY</span><span>: std::cell::RefCell&LTOption<</span><span style=color:#bf616a>$t</span><span>>> = </span><span style=color:#b48ead>const </span><span>{ std::cell::RefCell::new(None) };
+</span><span>            }
+</span><span>
+</span><span>            </span><span style=color:#bf616a>$crate</span><span>::task::LocalKey { inner: </span><span style=color:#d08770>__KEY </span><span>}
+</span><span>        };
+</span><span>    };
+</span><span>}
+</span></code></pre><p>where we can clearly conclude that <code>task_local!</code> is based on <code>thread_local!</code>. However, threads are reused by multiple different tasks asynchronously. If task 1 yields, the thread may be scheduled to another task 2. When task 1 is ready to run again, it may select another thread 2 to poll. Therefore, <code>thread_local</code> values may be overwritten or lost.<h2 id=swap>Swap!</h2><p>So, how does <code>task_local</code> ensure thread_local values not be overwritten or lost? The secret is under the implementation of <code>Future</code> for <code>task::LocalKey</code>'s wrapper.<p>Firstly, to use a LocalKey, one need to <code>scope</code> it and produce a <code>TaskLocalFuture&LTT, F></code> which binds <code>T</code> and the corresponding task's future <code>F</code>:<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>impl</span><span>&LTT> LocalKey&LTT> {
+</span><span>    </span><span style=color:#b48ead>pub fn </span><span style=color:#8fa1b3>scope</span><span>&LTF>(&</span><span style=color:#b48ead>'static </span><span style=color:#bf616a>self</span><span>, </span><span style=color:#bf616a>value</span><span>: T, </span><span style=color:#bf616a>f</span><span>: F) -> TaskLocalFuture&LTT, F>
+</span><span>    </span><span style=color:#b48ead>where
+</span><span>        F: Future,
+</span><span>    {
+</span><span>        TaskLocalFuture {
+</span><span>            local: </span><span style=color:#bf616a>self</span><span>,
+</span><span>            slot: Some(value),
+</span><span>            future: Some(f),
+</span><span>            _pinned: PhantomPinned,
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>scope_inner</span><span>&LTF, R>(&</span><span style=color:#b48ead>'static </span><span style=color:#bf616a>self</span><span>, </span><span style=color:#bf616a>slot</span><span>: &</span><span style=color:#b48ead>mut </span><span>Option&LTT>, </span><span style=color:#bf616a>f</span><span>: F) -> Result&LTR, ScopeInnerErr>
+</span><span>    </span><span style=color:#b48ead>where
+</span><span>        F: FnOnce() -> R,
+</span><span>    {
+</span><span>        </span><span style=color:#b48ead>struct </span><span>Guard<</span><span style=color:#b48ead>'a</span><span>, T: </span><span style=color:#b48ead>'static</span><span>> {
+</span><span>            </span><span style=color:#bf616a>local</span><span>: &</span><span style=color:#b48ead>'static </span><span>LocalKey&LTT>,
+</span><span>            </span><span style=color:#bf616a>slot</span><span>: &</span><span style=color:#b48ead>'a mut </span><span>Option&LTT>,
+</span><span>        }
+</span><span>
+</span><span>        </span><span style=color:#b48ead>impl</span><span><</span><span style=color:#b48ead>'a</span><span>, T: </span><span style=color:#b48ead>'static</span><span>> Drop </span><span style=color:#b48ead>for </span><span>Guard<</span><span style=color:#b48ead>'a</span><span>, T> {
+</span><span>            </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>drop</span><span>(&</span><span style=color:#b48ead>mut </span><span style=color:#bf616a>self</span><span>) {
+</span><span>                </span><span style=color:#65737e>// This should not panic.
+</span><span>                </span><span style=color:#65737e>//
+</span><span>                </span><span style=color:#65737e>// We know that the RefCell was not borrowed before the call to
+</span><span>                </span><span style=color:#65737e>// `scope_inner`, so the only way for this to panic is if the
+</span><span>                </span><span style=color:#65737e>// closure has created but not destroyed a RefCell guard.
+</span><span>                </span><span style=color:#65737e>// However, we never give user-code access to the guards, so
+</span><span>                </span><span style=color:#65737e>// there's no way for user-code to forget to destroy a guard.
+</span><span>                </span><span style=color:#65737e>//
+</span><span>                </span><span style=color:#65737e>// The call to `with` also should not panic, since the
+</span><span>                </span><span style=color:#65737e>// thread-local wasn't destroyed when we first called
+</span><span>                </span><span style=color:#65737e>// `scope_inner`, and it shouldn't have gotten destroyed since
+</span><span>                </span><span style=color:#65737e>// then.
+</span><span>                </span><span style=color:#bf616a>self</span><span>.local.inner.</span><span style=color:#96b5b4>with</span><span>(|</span><span style=color:#bf616a>inner</span><span>| {
+</span><span>                    </span><span style=color:#b48ead>let mut</span><span> ref_mut = inner.</span><span style=color:#96b5b4>borrow_mut</span><span>();
+</span><span>                    mem::swap(</span><span style=color:#bf616a>self</span><span>.slot, &</span><span style=color:#b48ead>mut </span><span>*ref_mut);
+</span><span>                });
+</span><span>            }
+</span><span>        }
+</span><span>
+</span><span>        </span><span style=color:#bf616a>self</span><span>.inner.</span><span style=color:#96b5b4>try_with</span><span>(|</span><span style=color:#bf616a>inner</span><span>| {
+</span><span>            inner
+</span><span>                .</span><span style=color:#96b5b4>try_borrow_mut</span><span>()
+</span><span>                .</span><span style=color:#96b5b4>map</span><span>(|</span><span style=color:#b48ead>mut </span><span style=color:#bf616a>ref_mut</span><span>| mem::swap(slot, &</span><span style=color:#b48ead>mut </span><span>*ref_mut))
+</span><span>        })??;
+</span><span>
+</span><span>        </span><span style=color:#b48ead>let</span><span> guard = Guard { local: </span><span style=color:#bf616a>self</span><span>, slot };
+</span><span>
+</span><span>        </span><span style=color:#b48ead>let</span><span> res = </span><span style=color:#96b5b4>f</span><span>();
+</span><span>
+</span><span>        </span><span style=color:#96b5b4>drop</span><span>(guard);
+</span><span>
+</span><span>        Ok(res)
+</span><span>    }
+</span><span>}
+</span></code></pre><p>The value <code>T</code> is initialized when polled the first time. The future impl is as follows:<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>impl</span><span>&LTT: </span><span style=color:#b48ead>'static</span><span>, F: Future> Future </span><span style=color:#b48ead>for </span><span>TaskLocalFuture&LTT, F> {
+</span><span>    </span><span style=color:#b48ead>type </span><span>Output = F::Output;
+</span><span>
+</span><span>    #[</span><span style=color:#bf616a>track_caller</span><span>]
+</span><span>    </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>poll</span><span>(</span><span style=color:#bf616a>self</span><span>: Pin<&</span><span style=color:#b48ead>mut Self</span><span>>, </span><span style=color:#bf616a>cx</span><span>: &</span><span style=color:#b48ead>mut </span><span>Context<'_>) -> Poll<</span><span style=color:#b48ead>Self::</span><span>Output> {
+</span><span>        </span><span style=color:#b48ead>let</span><span> this = </span><span style=color:#bf616a>self</span><span>.</span><span style=color:#96b5b4>project</span><span>();
+</span><span>        </span><span style=color:#b48ead>let mut</span><span> future_opt = this.future;
+</span><span>
+</span><span>        </span><span style=color:#b48ead>let</span><span> res = this
+</span><span>            .local
+</span><span>            .</span><span style=color:#96b5b4>scope_inner</span><span>(this.slot, || </span><span style=color:#b48ead>match</span><span> future_opt.</span><span style=color:#96b5b4>as_mut</span><span>().</span><span style=color:#96b5b4>as_pin_mut</span><span>() {
+</span><span>                Some(fut) => {
+</span><span>                    </span><span style=color:#b48ead>let</span><span> res = fut.</span><span style=color:#96b5b4>poll</span><span>(cx);
+</span><span>                    </span><span style=color:#b48ead>if</span><span> res.</span><span style=color:#96b5b4>is_ready</span><span>() {
+</span><span>                        future_opt.</span><span style=color:#96b5b4>set</span><span>(None);
+</span><span>                    }
+</span><span>                    Some(res)
+</span><span>                }
+</span><span>                None => None,
+</span><span>            });
+</span><span>
+</span><span>        </span><span style=color:#b48ead>match</span><span> res {
+</span><span>            Ok(Some(res)) => res,
+</span><span>            Ok(None) => panic!("</span><span style=color:#a3be8c>`TaskLocalFuture` polled after completion</span><span>"),
+</span><span>            Err(err) => err.</span><span style=color:#96b5b4>panic</span><span>(),
+</span><span>        }
+</span><span>    }
+</span><span>}
+</span></code></pre><p>Whenever the future is used to poll again, it just <em>SWAP</em> the global <code>thread_local</code> slot and the value inside <code>TaskLocalFuture</code> and <em>SWAP</em> back when finished.<p>As easy as pie ;)</div><div class=post-tags><a class=tag href=/tags/programming>#programming </a><a class=tag href=/tags/rust>#rust </a></div></article></main><footer><hr><div id=footer-container><i><a href=/test>Q.E.D.</a></i></div><br></footer><script defer src=https://noteoverflow.github.io/js/script.js></script>
