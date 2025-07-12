@@ -5,8 +5,8 @@
 <ul>
 {% for page in term.pages %}
     <li>
+        <time class="accent-data">{{ page.date | date(format="%Y-%m-%d") }}</time>
         <a href="{{ page.permalink }}">{{ page.title }}</a>
-        <time>{{ page.date | date(format="%Y-%m-%d") }}</time>
     </li>
 {% endfor %}
 </ul>

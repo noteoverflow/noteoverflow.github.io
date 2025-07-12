@@ -2,9 +2,10 @@
     {% if not page.date %}
         <time class="content-meta">{{ page.date | date(format="%b") }}</time>
     {% endif %}
+    <time class="accent-data">{{page.date|date(format="%Y-%m")}}</time>
     <a href="{{ page.permalink }}" class="content-link">
         {% set year = page.date|date(format="%Y") %}
-        [{{page.date|date(format="%Y-%m")}}] {{ page.title }}
+        {{ page.title }}
     </a>
 </li>
 
