@@ -79,6 +79,13 @@ Instead, decompose the first data (dimension) first, and then consider whether t
 The most typical example is high-dimensional dynamic optimization. 
 For this kind of problem, you must not rush to decompose it all at once, as you cannot eat hot tofu in a hurry.
 
+### Defer dividing
+Actually, most problems tagged `easy` and `medium` can be divided directly by its input and output.
+The real hard part is lying under the target to be divided.
+For instance, in designing the famous *quick sort*, one learns to rearrange the target array before dividing and recursion. the rearrange can effecttively efface the cost of merging after the recursion which is inevitable in `merge sort`.
+Moreover, many hard problems do not directly divide on input or output, nor the given effects.
+To solve them, one need to design and find a way to effectively construct a new data structure to be divided and recur.
+
 ### Reuse space
 When you try to design additional information again, you may find that the memory used to store the additional information can be reused. In this case, you must try to reuse this memory, which can usually greatly reduce space complexity.
 
@@ -99,3 +106,6 @@ Subproblems can be pruned. Greedy algorithms and early termination with backtrac
 
 ### Basic cata
 ![cata](/img/blog/catamorphism/catamorphism.png)
+
+The dividing-and-conquer part can be described by *catamorphism*.
+However, in many situations, one need to find a effective target data structure to be divided first which is the real enigma. I shall do more studies on this part.
