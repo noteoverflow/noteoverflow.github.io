@@ -1,5 +1,5 @@
 +++
-title = "无题"
+title = "无心"
 date = 2025-04-24
 [taxonomies]
 tags = ["zen"]
