@@ -40,3 +40,8 @@ tags = ["zen"]
 > 菩提本无树，何处惹尘埃
 
 所有的困难、失意此刻都开始熠熠生辉，人生进而感到神清气爽，不再患得患失。
+对事物看法的改变背后，其内因是对自己所行之道的由内而外的享受与坚定，热爱自己与道路上的风景。
+
+<center>
+<img src="/img/blog/distractions/self-attention.jpg"/><br/>
+</center>
