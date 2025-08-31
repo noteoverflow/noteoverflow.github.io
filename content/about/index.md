@@ -12,4 +12,6 @@ I'm
 
 [Github](https://github.com/noteoverflow)
 
+![noteoverflow-counter](https://count.getloli.com/@noteoverflow-counter)
+
 [^1]: *Ex falso quodlibet*
