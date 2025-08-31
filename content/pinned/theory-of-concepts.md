@@ -6,5 +6,6 @@ extra.toc = true
 tags = ["zen"]
 +++
 
+- [无心](/posts/no-title)
 - [概念的玄理 其一](/posts/concepts-i)
 - [自性的普遍性](/posts/selfness)
