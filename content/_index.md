@@ -14,12 +14,19 @@ I'm
   *C/C++*, 
   *<span style="color: cornflowerblue;">Python</span>*, 
   *Java*,
-  *<span style="color: purple;">Haskell</span>* and
+  *<span style="color: Violet;">Haskell</span>* and
   *Lean*.
 - a **researcher** studying *Transfer Learning* and *Programming Language Theory(PLT)*
 
-[Github](https://github.com/noteoverflow)
+<br/>
+
+Welcome to my [Github](https://github.com/noteoverflow)
+and [Posts](/posts)!
+
+*Show me how many visitors there are right now.*
 
 ![noteoverflow-counter](https://count.getloli.com/@noteoverflow-counter)
+
+<br/>
 
 [^1]: *Ex falso quodlibet*

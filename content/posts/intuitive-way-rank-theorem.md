@@ -1,5 +1,5 @@
 +++
-title = "An intuitive understanding of equality of matrix ranks"
+title = "An intuitive understanding matrix rank theorem"
 date = 2025-12-05
 extra.katex = true
 extra.toc = true
@@ -12,7 +12,7 @@ However, the conclusion seems somehow surprising and mysterious.
 Traditional proofs are based on elimination or dual spaces but I found the decomposition way is much simpler and more intuitive.
 
 Our goal:
-> **Theorem of rank equality**:  
+> **Theorem of rank**:  
 > Given any matrix $A$, $rank(A) = rank(A^T)$
 
 where $rank$ means the number of independent columns.
