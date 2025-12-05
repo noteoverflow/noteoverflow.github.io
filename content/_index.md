@@ -5,7 +5,7 @@
     window.location.href = "/posts"
 </script> -->
 
-![avatar](./icons8-best-terraria-48.png)
+![avatar](/img/icons8-best-terraria-48.png)
 
 Hello, this is *noteoverflow*[^1].
 I'm
@@ -23,9 +23,7 @@ I'm
 Welcome to my [Github](https://github.com/noteoverflow)
 and [Posts](/posts)!
 
-*Show me how many visitors there are right now.*
-
-![noteoverflow-counter](https://count.getloli.com/@noteoverflow-counter)
+![counter](https://count.getloli.com/@noteoverflow-counter)
 
 <br/>
 

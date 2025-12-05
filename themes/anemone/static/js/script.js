@@ -25,9 +25,9 @@ class ThemeManager {
         const savedTheme = localStorage.getItem('theme');
         const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
-
         document.documentElement.setAttribute('data-theme', initialTheme);
         this.updateIcon(initialTheme === 'dark');
+        this.updateComments(initialTheme);
     }
 
     toggleTheme() {
@@ -54,6 +54,25 @@ class ThemeManager {
                 document.body.classList.remove('theme-transition');
             }, 300);
         });
+
+        this.updateComments(newTheme);
+    }
+
+    updateComments(strTheme) {
+        let theme = strTheme === 'dark' ? 'github-dark' : 'github-light';
+        let s = document.createElement('script');
+        s.src = 'https://utteranc.es/client.js';
+        s.setAttribute('repo', 'tlqhrm/tlqhrm.github.io');
+        s.setAttribute('issue-term', 'title');
+        s.setAttribute('theme', theme);
+        s.setAttribute('crossorigin', 'anonymous');
+        s.setAttribute('async', '');
+        if (document.querySelector('div.comments') !== null) {
+            document.querySelector('div.comments').innerHTML = '';
+            document.querySelector('div.comments').appendChild(s);
+            return true;
+        }
+        return false;
     }
 
     updateIcon(isDark) {
@@ -63,6 +82,10 @@ class ThemeManager {
         }
     }
 }
+
+
+
+
 
 
 // Initialize when content is loaded

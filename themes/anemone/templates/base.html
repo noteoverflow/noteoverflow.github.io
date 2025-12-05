@@ -65,11 +65,13 @@
             {% block content %}{% endblock %}
         </main>
 
+        
         <footer>
             {% include "footer.html" %}
         </footer>
-
+        
         <!-- Move JS to end of body and add defer -->
         <script src="{{ get_url(path='js/script.js') }}" defer></script>
+        {% block comment %}{% endblock %}
     </body>
 </html>
