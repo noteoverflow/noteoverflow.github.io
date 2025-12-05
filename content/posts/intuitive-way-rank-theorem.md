@@ -1,5 +1,5 @@
 +++
-title = "An intuitive understanding matrix rank theorem"
+title = "An intuitive understanding of matrix rank theorem"
 date = 2025-12-05
 extra.katex = true
 extra.toc = true
