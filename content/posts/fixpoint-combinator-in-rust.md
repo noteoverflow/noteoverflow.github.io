@@ -47,7 +47,7 @@ figure 1
 
 ## *Self* as parameter
 Before we actually find the magic wand, let's first try to consider another question:
-> [!NOTE] QUESTION
+> QUESTION:  
 > Can we write recursions using pure lambda expressions without name binding?
 
 For example, if one want to write a recursive factorial function:
@@ -236,7 +236,7 @@ fn usage() {
 ### Application in real world
 At first glance, you may assume recursion without name binding is useless.
 
-> [!NOTE] QUESTION
+> QUESTION:  
 > What's the point of abstracting recursion this way if we can use name binding directly?
 
 I used to assume that the Y combinator can only be useful in theory analysis.
@@ -410,7 +410,7 @@ figure 2
 If this diagram commutes, we say that we have relation $f$ from $F(a) \rightarrow a$ to $F(b) \rightarrow b$.
 Various kinds of F-algebras and relations between them forms a category!
 Now we ask an interesting question:
-> [!NOTE] QUESTION
+> QUESTION:  
 > Does this category have initial object?
 > By *initial object*, we mean that, is there an object from which only exists one arrow to any other objects?
 
