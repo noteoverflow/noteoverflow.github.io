@@ -1,0 +1,35 @@
+<!doctype html><html lang=en><head><meta charset=UTF-8><meta content="width=device-width,initial-scale=1.0" name=viewport><meta content="index, follow" name=robots><link href=https://noteoverflow.github.io/rss.xml rel=alternate title=RSS type=application/rss+xml><title>noteoverflow | Golang does have sum types, however...</title><link as=style href=https://noteoverflow.github.io/css/style.css rel=preload><link crossorigin href=https://noteoverflow.github.io/css/reset-min.css rel=stylesheet><link crossorigin href=https://noteoverflow.github.io/css/suCSS-min.css rel=stylesheet><link href=https://noteoverflow.github.io/css/style.css rel=stylesheet><link href=https://noteoverflow.github.io/css/custom.css rel=stylesheet><link href=https://noteoverflow.github.io/img/favicon.ico rel=icon><body><nav id=nav-bar><a href=/posts> [post] </a><a href=/pinned> [pin] </a><a href=/tags> [tag] </a><a href=/> [self] </a>   <div aria-label="Toggle theme" class=theme-toggle data-icon-base=https://noteoverflow.github.io/icons.svg data-icon-dark=#darkMode data-icon-light=#lightMode data-sound-src=https://noteoverflow.github.io/click.ogg id=theme-toggle role=button tabindex=0><svg class=icon><use id=theme-icon></use></svg></div></nav><main><article class=post><header class=post-header><time datetime=2024-08-11>Published on: <span class=accent-data>2024-08-11</span> </time><div class=post-tags><a class=tag href=/tags/programming>#programming </a><a class=tag href=/tags/golang>#golang </a></div><h1>Golang does have sum types, however...</h1></header><div class=post-content><blockquote><p>Golang has no sum type!</blockquote><p>People like to say that golang lacks <em>sum types</em>. For example, in Rust we can write a simple <code>Result</code> type:<pre class=language-rust data-lang=rust style=color:#ccc9c2;background-color:#212733><code class=language-rust data-lang=rust><span style=color:#ffa759>enum </span><span style=color:#73d0ff>Result</span><span>&lt;T, E> {
+</span><span>    </span><span style=color:#5ccfe6;font-style:italic>Ok</span><span>(T)</span><span style=color:#ccc9c2cc>,
+</span><span>    </span><span style=color:#5ccfe6;font-style:italic>Err</span><span>(E)</span><span style=color:#ccc9c2cc>,
+</span><span>}
+</span></code></pre><p>Here <code>Result</code> is a sum type which can only be one variant(<code>Ok</code> or <code>Err</code>) but not both. Sum types are really useful to constraint values. In category theory, sum type is dual to product type, which is a universal type. If product types can be written as <code>a * b</code>, then sum types can be written as <code>a + b</code>.<p>Golang lacks direct support on sum types, but we can still simulate it:<pre class=language-go data-lang=go style=color:#ccc9c2;background-color:#212733><code class=language-go data-lang=go><span style=color:#ffa759>type </span><span style=color:#73d0ff>result</span><span>[T</span><span style=color:#ccc9c2cc>, </span><span>E any] </span><span style=color:#ffa759>interface </span><span>{
+</span><span>    </span><span style=color:#ffd580>isResult</span><span>()
+</span><span>}
+</span><span>
+</span><span style=color:#ffa759>type </span><span style=color:#73d0ff>Result</span><span>[T</span><span style=color:#ccc9c2cc>, </span><span>E any] </span><span style=color:#ffa759>struct </span><span>{
+</span><span>    inner </span><span style=color:#ffa759>result</span><span>[T</span><span style=color:#ccc9c2cc>, </span><span>E]
+</span><span>}
+</span><span>
+</span><span>
+</span><span style=color:#ffa759>type </span><span style=color:#73d0ff>Ok</span><span>[T</span><span style=color:#ccc9c2cc>, </span><span>E any] </span><span style=color:#ffa759>struct </span><span>{
+</span><span>    value </span><span style=color:#ffa759>T
+</span><span>}
+</span><span style=color:#ffa759>type </span><span style=color:#73d0ff>Err</span><span>[T</span><span style=color:#ccc9c2cc>, </span><span>E any] </span><span style=color:#ffa759>struct </span><span>{
+</span><span>    err </span><span style=color:#ffa759>E
+</span><span>}
+</span><span>
+</span><span style=color:#ffa759>func </span><span>(</span><span style=color:#fc6>Ok</span><span>[T</span><span style=color:#ccc9c2cc>, </span><span>E]) </span><span style=color:#ffd580>isResult</span><span>() {}
+</span><span style=color:#ffa759>func </span><span>(</span><span style=color:#fc6>Err</span><span>[T</span><span style=color:#ccc9c2cc>, </span><span>E]) </span><span style=color:#ffd580>isResult</span><span>() {}
+</span><span>
+</span><span style=color:#ffa759>func </span><span>(</span><span style=color:#fc6>res </span><span style=color:#ffa759>Result</span><span>[</span><span style=color:#fc6>T</span><span style=color:#ccc9c2cc>, </span><span style=color:#fc6>E</span><span>]) </span><span style=color:#ffd580>Switch</span><span>() </span><span style=color:#ffa759>result</span><span>[T</span><span style=color:#ccc9c2cc>, </span><span>E] {
+</span><span>    </span><span style=color:#ffa759>return </span><span>res</span><span style=color:#f29e74>.</span><span>inner
+</span><span>}
+</span></code></pre><p>To match variants:<pre class=language-go data-lang=go style=color:#ccc9c2;background-color:#212733><code class=language-go data-lang=go><span style=color:#ffa759>func </span><span>matching[T</span><span style=color:#ccc9c2cc>, </span><span>E any](res Result[T</span><span style=color:#ccc9c2cc>, </span><span>E]) {
+</span><span>    </span><span style=color:#ffa759>switch </span><span>r </span><span style=color:#f29e74>:= </span><span>res</span><span style=color:#f29e74>.</span><span style=color:#ffd580>Switch</span><span>()</span><span style=color:#f29e74>.</span><span>(</span><span style=color:#ffa759>type</span><span>) {
+</span><span>    </span><span style=color:#ffa759>case </span><span>Ok[T</span><span style=color:#ccc9c2cc>, </span><span>E]</span><span style=color:#ccc9c2cc>:
+</span><span>        </span><span style=color:#5ccfe6;font-style:italic>_ </span><span style=color:#f29e74>= </span><span>r</span><span style=color:#f29e74>.</span><span>value
+</span><span>    </span><span style=color:#ffa759>case </span><span>Err[T</span><span style=color:#ccc9c2cc>, </span><span>E]</span><span style=color:#ccc9c2cc>:
+</span><span>    </span><span style=color:#ffa759>default</span><span style=color:#ccc9c2cc>:
+</span><span>    }
+</span><span>}
+</span></code></pre><p>However, since golang doest not have generic methods, its function is still limited(golang team is far too conservative)...<p>Although we can simulate <code>Result</code> sum type in Golang, we are still forced to use (T, error) and write <code>if err != nil</code> lol. What a great language!</div></article></main><footer><br><div id=footer-container><i><a href=/internal/test>Q.E.D.</a></i></div><br></footer><script defer src=https://noteoverflow.github.io/js/script.js></script><div class=comments></div>
