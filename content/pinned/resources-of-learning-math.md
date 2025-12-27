@@ -28,6 +28,10 @@ Some books I enjoy:
 ### Functional analysis
 - [Functional Analysis: An Introduction to Metric Spaces, Hilbert Spaces, and Banach Algebras](https://www.amazon.com/Functional-Analysis-Introduction-Hilbert-Algebras/dp/3319067273)
 
+### Vector calculus
+- [Vector Calculus, Linear Algebra, and Differential Forms](https://www.amazon.com/Vector-Calculus-Linear-Algebra-Differential/dp/0136574467)
+
+
 ## Category Theory
 - [The joy of abstraction](https://www.amazon.com/Joy-Abstraction-Exploration-Category-Theory/dp/1108477224)
 - [Category Theory in Context](https://www.amazon.com/Category-Theory-Context-Aurora-Originals/dp/048680903X)
