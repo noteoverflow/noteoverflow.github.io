@@ -6,6 +6,7 @@ extra.toc = true
 tags = ["math"]
 +++
 
+
 Some books I enjoy:
 
 ## Algebra
@@ -37,6 +38,8 @@ Some books I enjoy:
 - [Category Theory in Context](https://www.amazon.com/Category-Theory-Context-Aurora-Originals/dp/048680903X)
 - [Category theory for the working mathematician](https://www.amazon.com/Categories-Working-Mathematician-Graduate-Mathematics/dp/1441931236)
 - [Category theory for programmers](https://www.amazon.com/Category-Theory-Programmers-Bartosz-Milewski/dp/0464243874)
+- [Conceptual Mathematics: A first introduction to categories](https://www.amazon.com/Conceptual-Mathematics-First-Introduction-Categories/dp/052171916X)
+- [Category Theory (Oxford Logic Guides)](https://www.amazon.com/Category-Theory-Oxford-Logic-Guides/dp/0199237182)
 
 ## Topology
 - [Topology without tears](https://www.topologywithouttears.net/)
